@@ -39,20 +39,27 @@ func corsMiddleware(next http.Handler) http.Handler {
 func main() {
 	InitDB()
 
-	log.Println("CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, email VARCHAR(100) UNIQUE, password_hash VARCHAR(255), full_name VARCHAR(100), phone VARCHAR(20), avatar VARCHAR(500), bio TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);")
-
 	r := mux.NewRouter()
 
 	// 应用 CORS 中间件
 	r.Use(corsMiddleware)
 
-	// API 路由
+	// API 路由 - 使用更严格的匹配
+	api := r.PathPrefix("/api").Subrouter()
+	api.HandleFunc("/register", RegisterHandler).Methods("POST")
+	api.HandleFunc("/login", LoginHandler).Methods("POST")
+	api.HandleFunc("/users/{id:[0-9]+}", GetUserProfileHandler).Methods("GET")
+	api.HandleFunc("/users/{id:[0-9]+}", UpdateUserProfileHandler).Methods("PUT")
+	api.HandleFunc("/users/{id:[0-9]+}/password", ChangePasswordHandler).Methods("PUT")
+	
+	// 课程相关API
+	api.HandleFunc("/courses", GetCoursesHandler).Methods("GET")
+	api.HandleFunc("/users/{userId:[0-9]+}/courses", GetUserCoursesHandler).Methods("GET")
+	api.HandleFunc("/users/{userId:[0-9]+}/courses/{courseId:[0-9]+}", EnrollCourseHandler).Methods("POST")
+	api.HandleFunc("/users/{userId:[0-9]+}/courses/{courseId:[0-9]+}/progress", UpdateCourseProgressHandler).Methods("PUT")
+
+	// 健康检查
 	r.HandleFunc("/health", healthHandler).Methods("GET")
-	r.HandleFunc("/api/register", RegisterHandler).Methods("POST")
-	r.HandleFunc("/api/login", LoginHandler).Methods("POST")
-	r.HandleFunc("/api/users/{id}", GetUserProfileHandler).Methods("GET")
-	r.HandleFunc("/api/users/{id}", UpdateUserProfileHandler).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/password", ChangePasswordHandler).Methods("PUT")
 
 	// 静态文件服务
 	r.PathPrefix("/public/").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/"))))

@@ -19,7 +19,7 @@ func InitDB() {
 	if dsn == "" {
 		log.Println("DSN environment variable not set. Using default.")
 		// Default DSN for local development.
-		dsn = "user:password@tcp(127.0.0.1:3308)/final_project_db?parseTime=true"
+		dsn = "user:password@tcp(127.0.0.1:3308)/final_project_db?parseTime=true&charset=utf8mb4&collation=utf8mb4_unicode_ci"
 	}
 
 	DB, err = sql.Open("mysql", dsn)

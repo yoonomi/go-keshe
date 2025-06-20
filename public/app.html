@@ -299,47 +299,103 @@
 
     <!-- User Profile Modal -->
     <div id="profileModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
             <span class="close" onclick="closeProfileModal()">&times;</span>
-            <h2 class="text-2xl font-bold text-center mb-6">个人中心</h2>
-            <form id="profileForm" onsubmit="handleProfileUpdate(event)">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="profileUsername">
-                        用户名
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" 
-                           id="profileUsername" type="text" readonly>
+            <h2 class="text-3xl font-bold text-center mb-8">🎓 个人中心</h2>
+            
+            <!-- 标签导航 -->
+            <div class="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+                <button id="profileInfoTab" onclick="switchProfileTab('info')" class="flex-1 py-2 px-4 rounded-md font-medium transition-colors bg-white text-blue-600 shadow-sm">
+                    📝 个人信息
+                </button>
+                <button id="profileCoursesTab" onclick="switchProfileTab('courses')" class="flex-1 py-2 px-4 rounded-md font-medium transition-colors text-gray-600 hover:text-blue-600">
+                    📚 我的课程
+                </button>
+                <button id="profileStatsTab" onclick="switchProfileTab('stats')" class="flex-1 py-2 px-4 rounded-md font-medium transition-colors text-gray-600 hover:text-blue-600">
+                    📊 学习统计
+                </button>
+            </div>
+
+            <!-- 个人信息标签页 -->
+            <div id="profileInfoPanel" class="tab-panel">
+                <form id="profileForm" onsubmit="handleProfileUpdate(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profileUsername">
+                                👤 用户名
+                            </label>
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" 
+                                   id="profileUsername" type="text" readonly>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profileEmail">
+                                📧 邮箱
+                            </label>
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" 
+                                   id="profileEmail" type="email" readonly>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profileFullName">
+                                🏷️ 真实姓名
+                            </label>
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
+                                   id="profileFullName" type="text" placeholder="请输入真实姓名">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profilePhone">
+                                📱 手机号码
+                            </label>
+                            <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
+                                   id="profilePhone" type="tel" placeholder="请输入手机号码">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="profileBio">
+                            ✍️ 个人简介
+                        </label>
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
+                                  id="profileBio" rows="3" placeholder="请输入个人简介"></textarea>
+                    </div>
+                    <button type="submit" class="w-full btn-primary">💾 更新信息</button>
+                </form>
+            </div>
+
+            <!-- 我的课程标签页 -->
+            <div id="profileCoursesPanel" class="tab-panel hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold">📚 我的选课</h3>
+                    <button onclick="openCourseListModal()" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors">
+                        ➕ 选择新课程
+                    </button>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="profileEmail">
-                        邮箱
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" 
-                           id="profileEmail" type="email" readonly>
+                <div id="userCoursesList" class="space-y-4">
+                    <!-- 用户课程列表将在这里动态加载 -->
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="profileFullName">
-                        真实姓名
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
-                           id="profileFullName" type="text" placeholder="请输入真实姓名">
+            </div>
+
+            <!-- 学习统计标签页 -->
+            <div id="profileStatsPanel" class="tab-panel hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="totalCoursesCount">0</div>
+                        <div class="text-gray-600">总课程数</div>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-green-600" id="completedCoursesCount">0</div>
+                        <div class="text-gray-600">已完成</div>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-lg text-center">
+                        <div class="text-3xl font-bold text-orange-600" id="averageProgress">0%</div>
+                        <div class="text-gray-600">平均进度</div>
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="profilePhone">
-                        手机号码
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
-                           id="profilePhone" type="tel" placeholder="请输入手机号码">
+                <div class="mt-8">
+                    <h4 class="text-lg font-semibold mb-4">📈 学习趋势</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-600">学习统计功能正在开发中...</p>
+                    </div>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="profileBio">
-                        个人简介
-                    </label>
-                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" 
-                              id="profileBio" rows="3" placeholder="请输入个人简介"></textarea>
-                </div>
-                <button type="submit" class="w-full btn-primary">更新信息</button>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -372,6 +428,22 @@
                 </div>
                 <button type="submit" class="w-full btn-primary">修改密码</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Course List Modal -->
+    <div id="courseListModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <span class="close" onclick="closeCourseListModal()">&times;</span>
+            <h2 class="text-2xl font-bold text-center mb-6">📚 选择课程</h2>
+            <div class="mb-4">
+                <input type="text" id="courseSearchInput" placeholder="🔍 搜索课程..." 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                       onkeyup="filterCourses()">
+            </div>
+            <div id="availableCoursesList" class="space-y-4">
+                <!-- 可选课程列表将在这里动态加载 -->
+            </div>
         </div>
     </div>
 
@@ -503,17 +575,31 @@
             alert('已安全退出登录');
         }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const loginModal = document.getElementById('loginModal');
-            const registerModal = document.getElementById('registerModal');
-            if (event.target == loginModal) {
-                closeLoginModal();
+        // Modal click outside behavior disabled - modals can only be closed by close button
+        // ESC key handling for modals
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const loginModal = document.getElementById('loginModal');
+                const registerModal = document.getElementById('registerModal');
+                const profileModal = document.getElementById('profileModal');
+                const courseListModal = document.getElementById('courseListModal');
+                
+                // Only close login/register modals with confirmation
+                if (loginModal && loginModal.classList.contains('show')) {
+                    if (confirm('确定要关闭登录窗口吗？')) {
+                        closeLoginModal();
+                    }
+                } else if (registerModal && registerModal.classList.contains('show')) {
+                    if (confirm('确定要关闭注册窗口吗？')) {
+                        closeRegisterModal();
+                    }
+                } else if (profileModal && profileModal.classList.contains('show')) {
+                    closeProfileModal();
+                } else if (courseListModal && courseListModal.classList.contains('show')) {
+                    closeCourseListModal();
+                }
             }
-            if (event.target == registerModal) {
-                closeRegisterModal();
-            }
-        }
+        });
 
         // Handle login form submission
         async function handleLogin(event) {
@@ -603,12 +689,44 @@
             }
         }
 
+        // Profile tab management
+        function switchProfileTab(tabName) {
+            // Hide all panels
+            const panels = ['profileInfoPanel', 'profileCoursesPanel', 'profileStatsPanel'];
+            const tabs = ['profileInfoTab', 'profileCoursesTab', 'profileStatsTab'];
+            
+            panels.forEach(panel => {
+                document.getElementById(panel).classList.add('hidden');
+            });
+            
+            tabs.forEach(tab => {
+                const tabEl = document.getElementById(tab);
+                tabEl.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                tabEl.classList.add('text-gray-600');
+            });
+            
+            // Show selected panel
+            document.getElementById(`profile${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Panel`).classList.remove('hidden');
+            
+            // Highlight selected tab
+            const activeTab = document.getElementById(`profile${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`);
+            activeTab.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            activeTab.classList.remove('text-gray-600');
+            
+            // Load data based on tab
+            if (tabName === 'courses') {
+                loadUserCourses();
+            } else if (tabName === 'stats') {
+                loadUserStats();
+            }
+        }
+
         // Load user profile data
         async function loadUserProfile() {
             if (!currentUser) return;
 
             try {
-                const response = await fetch(`/api/users/${currentUser.userID}`, {
+                const response = await fetch(`/api/users/${currentUser.user_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -647,7 +765,7 @@
             const bio = document.getElementById('profileBio').value;
 
             try {
-                const response = await fetch(`/api/users/${currentUser.userID}`, {
+                const response = await fetch(`/api/users/${currentUser.user_id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -698,7 +816,7 @@
             }
 
             try {
-                const response = await fetch(`/api/users/${currentUser.userID}/password`, {
+                const response = await fetch(`/api/users/${currentUser.user_id}/password`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -724,6 +842,272 @@
             } catch (error) {
                 console.error('修改密码错误:', error);
                 alert('修改密码失败：网络错误，请稍后重试');
+            }
+        }
+
+        // Course management functions
+        async function loadUserCourses() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.user_id}/courses`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    displayUserCourses(data.data);
+                } else {
+                    console.error('Failed to load user courses:', data.message);
+                }
+            } catch (error) {
+                console.error('Error loading user courses:', error);
+            }
+        }
+
+        function displayUserCourses(courses) {
+            const container = document.getElementById('userCoursesList');
+            
+            if (!courses || courses.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-4">📚</div>
+                        <p>您还没有选择任何课程</p>
+                        <p>点击"选择新课程"开始学习吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = courses.map(userCourse => {
+                const course = userCourse.course;
+                const progressPercent = Math.round(userCourse.progress);
+                const difficultyColors = {
+                    'beginner': 'bg-green-100 text-green-800',
+                    'intermediate': 'bg-yellow-100 text-yellow-800',
+                    'advanced': 'bg-red-100 text-red-800'
+                };
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">${course.title}</h4>
+                                <p class="text-gray-600 mb-3">${course.description}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span>👨‍🏫 ${course.instructor}</span>
+                                    <span class="px-2 py-1 rounded-full ${difficultyColors[course.difficulty] || 'bg-gray-100 text-gray-800'}">${course.difficulty}</span>
+                                    <span>⏱️ ${course.duration}分钟</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>学习进度</span>
+                                <span>${progressPercent}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">
+                                选课时间: ${new Date(userCourse.enrolled_at).toLocaleDateString()}
+                            </span>
+                            <div class="space-x-2">
+                                <button onclick="updateProgress(${userCourse.course_id}, ${Math.min(progressPercent + 10, 100)})" 
+                                        class="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                                    📈 +10%
+                                </button>
+                                ${progressPercent < 100 ? 
+                                    `<button onclick="updateProgress(${userCourse.course_id}, 100)" 
+                                             class="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors">
+                                        ✅ 完成
+                                    </button>` : 
+                                    `<span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded">已完成</span>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadUserStats() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.user_id}/courses`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    const courses = data.data;
+                    const totalCourses = courses.length;
+                    const completedCourses = courses.filter(c => c.progress >= 100).length;
+                    const avgProgress = totalCourses > 0 ? 
+                        Math.round(courses.reduce((sum, c) => sum + c.progress, 0) / totalCourses) : 0;
+
+                    document.getElementById('totalCoursesCount').textContent = totalCourses;
+                    document.getElementById('completedCoursesCount').textContent = completedCourses;
+                    document.getElementById('averageProgress').textContent = avgProgress + '%';
+                }
+            } catch (error) {
+                console.error('Error loading user stats:', error);
+            }
+        }
+
+        // Course list modal functions
+        function openCourseListModal() {
+            document.getElementById('courseListModal').classList.add('show');
+            loadAvailableCourses();
+        }
+
+        function closeCourseListModal() {
+            document.getElementById('courseListModal').classList.remove('show');
+        }
+
+        async function loadAvailableCourses() {
+            try {
+                const response = await fetch('/api/courses', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    displayAvailableCourses(data.data);
+                } else {
+                    console.error('Failed to load courses:', data.message);
+                }
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+        }
+
+        function displayAvailableCourses(courses) {
+            const container = document.getElementById('availableCoursesList');
+            
+            if (!courses || courses.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-gray-500">暂无可选课程</div>';
+                return;
+            }
+
+            container.innerHTML = courses.map(course => {
+                const difficultyColors = {
+                    'beginner': 'bg-green-100 text-green-800',
+                    'intermediate': 'bg-yellow-100 text-yellow-800',
+                    'advanced': 'bg-red-100 text-red-800'
+                };
+
+                return `
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow course-item" data-title="${course.title}" data-instructor="${course.instructor}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">${course.title}</h4>
+                                <p class="text-gray-600 mb-3">${course.description}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span>👨‍🏫 ${course.instructor}</span>
+                                    <span class="px-2 py-1 rounded-full ${difficultyColors[course.difficulty] || 'bg-gray-100 text-gray-800'}">${course.difficulty}</span>
+                                    <span>⏱️ ${course.duration}分钟</span>
+                                </div>
+                            </div>
+                            <button onclick="enrollCourse(${course.id})" 
+                                    class="ml-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                                📝 选课
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterCourses() {
+            const searchTerm = document.getElementById('courseSearchInput').value.toLowerCase();
+            const courseItems = document.querySelectorAll('.course-item');
+            
+            courseItems.forEach(item => {
+                const title = item.dataset.title.toLowerCase();
+                const instructor = item.dataset.instructor.toLowerCase();
+                
+                if (title.includes(searchTerm) || instructor.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        async function enrollCourse(courseId) {
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.user_id}/courses/${courseId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    alert('选课成功！');
+                    closeCourseListModal();
+                    loadUserCourses(); // 刷新用户课程列表
+                } else {
+                    alert('选课失败：' + (data.message || '未知错误'));
+                }
+            } catch (error) {
+                console.error('Error enrolling course:', error);
+                alert('选课失败：网络错误');
+            }
+        }
+
+        async function updateProgress(courseId, newProgress) {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`/api/users/${currentUser.user_id}/courses/${courseId}/progress`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        progress: newProgress
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    loadUserCourses(); // 刷新课程列表
+                    if (newProgress >= 100) {
+                        alert('🎉 恭喜完成课程！');
+                    }
+                } else {
+                    alert('更新进度失败：' + (data.message || '未知错误'));
+                }
+            } catch (error) {
+                console.error('Error updating progress:', error);
+                alert('更新进度失败：网络错误');
             }
         }
 

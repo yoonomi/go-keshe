@@ -53,4 +53,29 @@ type UserSession struct {
 	Token    string `json:"token,omitempty"` // 未来可以实现JWT
 }
 
+// Course 课程结构
+type Course struct {
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Instructor  string    `json:"instructor"`
+	ImageURL    string    `json:"image_url"`
+	Difficulty  string    `json:"difficulty"`
+	Duration    int       `json:"duration"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// UserCourse 用户选课结构
+type UserCourse struct {
+	ID          int        `json:"id"`
+	UserID      int        `json:"user_id"`
+	CourseID    int        `json:"course_id"`
+	EnrolledAt  time.Time  `json:"enrolled_at"`
+	Progress    float64    `json:"progress"`
+	CompletedAt *time.Time `json:"completed_at,omitempty"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	Course      Course     `json:"course,omitempty"`
+}
+
  

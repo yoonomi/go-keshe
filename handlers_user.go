@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
@@ -24,6 +25,16 @@ func writeJSON(w http.ResponseWriter, status int, v interface{}) {
 	if err := json.NewEncoder(w).Encode(v); err != nil {
 		log.Printf("Error writing JSON response: %v", err)
 	}
+}
+
+// sendWelcomeEmail 异步发送欢迎邮件的模拟函数
+func sendWelcomeEmail(email string) {
+	log.Printf("📧 开始为用户 %s 发送欢迎邮件...", email)
+	
+	// 模拟邮件发送的延迟
+	time.Sleep(3 * time.Second)
+	
+	log.Printf("✅ 欢迎邮件已成功发送给用户: %s", email)
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -80,12 +91,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 🚀 异步发送欢迎邮件，提升用户注册体验
+	go sendWelcomeEmail(user.Email)
+	
+	// 立即返回成功响应，不等待邮件发送完成
 	writeJSON(w, http.StatusCreated, APIResponse{Status: "success", Message: "注册成功"})
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Email    string `json:"email"`
+		Username string `json:"username"`
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -98,9 +114,21 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := GetUserByEmail(req.Email)
+	var user *User
+	var err error
+	
+	// 支持用户名或邮箱登录
+	if req.Email != "" {
+		user, err = GetUserByEmail(req.Email)
+	} else if req.Username != "" {
+		user, err = GetUserByUsername(req.Username)
+	} else {
+		writeJSON(w, http.StatusBadRequest, APIResponse{Status: "error", Message: "Email or username is required"})
+		return
+	}
+	
 	if err != nil {
-		writeJSON(w, http.StatusUnauthorized, APIResponse{Status: "error", Message: "Invalid email or password"})
+		writeJSON(w, http.StatusUnauthorized, APIResponse{Status: "error", Message: "Invalid credentials"})
 		return
 	}
 
